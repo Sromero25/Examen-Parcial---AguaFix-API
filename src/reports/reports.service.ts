@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Report } from './entities/report.entity';
 import { CreateReportDto } from './dto/create-report.dto';
+import { UpdateReportDto } from './dto/update-report.dto';
 import { EmailService } from '../email/email.service';
 import { generateReportTemplate } from './templates/report.template';
 import { envs } from '../config/envs';
@@ -37,5 +38,26 @@ export class ReportsService {
     return this.reportRepository.find({
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async findOne(id: number) {
+    const report = await this.reportRepository.findOne({ where: { id } });
+    if (!report) {
+      throw new NotFoundException(`El reporte con ID ${id} no fue encontrado`);
+    }
+    return report;
+  }
+
+  async update(id: number, updateReportDto: UpdateReportDto) {
+    
+    const report = await this.findOne(id);
+    
+    const updatedReport = Object.assign(report, updateReportDto);
+    return this.reportRepository.save(updatedReport);
+  }
+
+  async remove(id: number) {
+    const report = await this.findOne(id);
+    return this.reportRepository.remove(report);
   }
 }
