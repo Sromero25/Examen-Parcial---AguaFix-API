@@ -34,8 +34,8 @@ export class AuthService {
       where: { email: loginDto.email },
     });
 
-    if (!user || !bcrypt.compareSync(loginDto.password, user.password)) {
-      throw new BadRequestException('Credenciales inválidas'); // Requisito del examen
+    if (!user || !bcrypt.compareSync(loginDto.password, user.password!)) {
+      throw new BadRequestException('Credenciales inválidas');
     }
     
     delete user.password;

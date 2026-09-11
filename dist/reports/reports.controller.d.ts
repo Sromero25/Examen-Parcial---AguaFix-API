@@ -1,0 +1,8 @@
+import { ReportsService } from './reports.service';
+import { CreateReportDto } from './dto/create-report.dto';
+export declare class ReportsController {
+    private readonly reportsService;
+    constructor(reportsService: ReportsService);
+    create(createReportDto: CreateReportDto): Promise<import("./entities/report.entity").Report>;
+    findAll(): Promise<import("./entities/report.entity").Report[]>;
+}
