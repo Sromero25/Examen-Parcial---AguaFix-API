@@ -8,7 +8,7 @@ import { EmailModule } from '../email/email.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Report]), 
-    EmailModule // Importamos el módulo para poder usar EmailService
+    EmailModule 
   ],
   controllers: [ReportsController],
   providers: [ReportsService],
