@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Patch, Delete, ParseIntPipe } from 
 import { ReportsService } from './reports.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('reports')
 export class ReportsController {

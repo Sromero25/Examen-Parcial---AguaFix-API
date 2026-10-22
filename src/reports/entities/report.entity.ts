@@ -22,4 +22,10 @@ export class Report {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
+  @Column('text')
+  photoUrl: string;
+
+  @Column('text', { nullable: true })
+  repairPhotoUrl: string;
 }

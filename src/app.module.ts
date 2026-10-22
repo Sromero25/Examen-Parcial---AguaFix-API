@@ -4,6 +4,7 @@ import { envs } from './config/envs';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { ReportsModule } from './reports/reports.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ReportsModule } from './reports/reports.module';
     AuthModule,
     EmailModule,
     ReportsModule,
+    StorageModule,
   ],
 })
 export class AppModule {}
