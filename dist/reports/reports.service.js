@@ -39,6 +39,22 @@ let ReportsService = class ReportsService {
             order: { createdAt: 'DESC' },
         });
     }
+    async findOne(id) {
+        const report = await this.reportRepository.findOne({ where: { id } });
+        if (!report) {
+            throw new common_1.NotFoundException(`El reporte con ID ${id} no fue encontrado`);
+        }
+        return report;
+    }
+    async update(id, updateReportDto) {
+        const report = await this.findOne(id);
+        const updatedReport = Object.assign(report, updateReportDto);
+        return this.reportRepository.save(updatedReport);
+    }
+    async remove(id) {
+        const report = await this.findOne(id);
+        return this.reportRepository.remove(report);
+    }
 };
 exports.ReportsService = ReportsService;
 exports.ReportsService = ReportsService = __decorate([
