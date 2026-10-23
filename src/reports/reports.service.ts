@@ -16,7 +16,7 @@ export class ReportsService {
     private readonly emailService: EmailService,
   ) {}
 
-  async create(createReportDto: CreateReportDto) {
+  async create(createReportDto: CreateReportDto, photo: Express.Multer.File,) {
     // 1. Guardar reporte en base de datos
     const report = this.reportRepository.create(createReportDto);
     await this.reportRepository.save(report);
@@ -48,7 +48,7 @@ export class ReportsService {
     return report;
   }
 
-  async update(id: number, updateReportDto: UpdateReportDto) {
+  async update(id: number, updateReportDto: UpdateReportDto, repairPhoto?: Express.Multer.File,) {
     
     const report = await this.findOne(id);
     
