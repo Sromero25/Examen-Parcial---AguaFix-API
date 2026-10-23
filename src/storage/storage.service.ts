@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { envs } from '../config/envs';
 import { v4 as uuidv4 } from 'uuid';
-import * as extname from 'path';
 
 @Injectable()
 export class StorageService {
@@ -15,7 +14,8 @@ export class StorageService {
     },
   });
 
-  async uploadFile(file: Express.Multer.File, folder: string): Promise<string> {
+  // Usamos 'any' para evitar errores de TypeScript con Express/Multer
+  async uploadFile(file: any, folder: string): Promise<string> {
     const extension = file.originalname.split('.').pop();
     const fileName = `${folder}/${uuidv4()}.${extension}`;
 
@@ -24,7 +24,6 @@ export class StorageService {
       Key: fileName,
       Body: file.buffer,
       ContentType: file.mimetype,
-      // ACL: 'public-read', // Descomenta solo si tu bucket exige ACL explícito para ser público
     });
 
     try {
