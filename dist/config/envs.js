@@ -47,5 +47,9 @@ exports.envs = {
     MAILER_EMAIL: env.get('MAILER_EMAIL').required().asString(),
     MAILER_SECRET_KEY: env.get('MAILER_SECRET_KEY').required().asString(),
     MAINTENANCE_EMAIL: env.get('MAINTENANCE_EMAIL').required().asString(),
+    AWS_REGION: env.get('AWS_REGION').required().asString(),
+    AWS_ACCESS_KEY_ID: env.get('AWS_ACCESS_KEY_ID').required().asString(),
+    AWS_SECRET_ACCESS_KEY: env.get('AWS_SECRET_ACCESS_KEY').required().asString(),
+    AWS_S3_BUCKET: env.get('AWS_S3_BUCKET').required().asString(),
 };
 //# sourceMappingURL=envs.js.map

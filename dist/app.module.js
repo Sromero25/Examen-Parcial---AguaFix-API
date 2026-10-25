@@ -13,6 +13,7 @@ const envs_1 = require("./config/envs");
 const auth_module_1 = require("./auth/auth.module");
 const email_module_1 = require("./email/email.module");
 const reports_module_1 = require("./reports/reports.module");
+const storage_module_1 = require("./storage/storage.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -32,6 +33,7 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             email_module_1.EmailModule,
             reports_module_1.ReportsModule,
+            storage_module_1.StorageModule,
         ],
     })
 ], AppModule);

@@ -18,19 +18,26 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const report_entity_1 = require("./entities/report.entity");
 const email_service_1 = require("../email/email.service");
+const storage_service_1 = require("../storage/storage.service");
 const report_template_1 = require("./templates/report.template");
 const envs_1 = require("../config/envs");
 let ReportsService = class ReportsService {
     reportRepository;
     emailService;
-    constructor(reportRepository, emailService) {
+    storageService;
+    constructor(reportRepository, emailService, storageService) {
         this.reportRepository = reportRepository;
         this.emailService = emailService;
+        this.storageService = storageService;
     }
-    async create(createReportDto) {
-        const report = this.reportRepository.create(createReportDto);
+    async create(createReportDto, photo) {
+        const photoUrl = await this.storageService.uploadFile(photo, 'reports');
+        const report = this.reportRepository.create({
+            ...createReportDto,
+            photoUrl: photoUrl
+        });
         await this.reportRepository.save(report);
-        const emailTemplate = (0, report_template_1.generateReportTemplate)(createReportDto);
+        const emailTemplate = (0, report_template_1.generateReportTemplate)(createReportDto, photoUrl);
         await this.emailService.sendEmail(envs_1.envs.MAINTENANCE_EMAIL, `Alerta de Fuga - Prioridad ${createReportDto.severity.toUpperCase()}`, emailTemplate);
         return report;
     }
@@ -46,9 +53,17 @@ let ReportsService = class ReportsService {
         }
         return report;
     }
-    async update(id, updateReportDto) {
+    async update(id, updateReportDto, repairPhoto) {
         const report = await this.findOne(id);
-        const updatedReport = Object.assign(report, updateReportDto);
+        let repairPhotoUrl = report.repairPhotoUrl;
+        if (repairPhoto) {
+            repairPhotoUrl = await this.storageService.uploadFile(repairPhoto, 'repairs');
+            updateReportDto.isResolved = true;
+        }
+        if (typeof updateReportDto.isResolved === 'string') {
+            updateReportDto.isResolved = updateReportDto.isResolved === 'true';
+        }
+        const updatedReport = Object.assign(report, { ...updateReportDto, repairPhotoUrl });
         return this.reportRepository.save(updatedReport);
     }
     async remove(id) {
@@ -61,6 +76,7 @@ exports.ReportsService = ReportsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(report_entity_1.Report)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        email_service_1.EmailService])
+        email_service_1.EmailService,
+        storage_service_1.StorageService])
 ], ReportsService);
 //# sourceMappingURL=reports.service.js.map

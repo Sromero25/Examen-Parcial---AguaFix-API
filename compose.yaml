@@ -15,7 +15,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   api:
-    image: tu_usuario_de_dockerhub/aguafix-api:latest  # <-- ¡CAMBIA ESTO POR TU USUARIO!
+    image: sromero25/aguafix-api:latest 
     container_name: aguafix_api
     restart: always
     ports:

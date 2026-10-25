@@ -6,4 +6,6 @@ export declare class Report {
     reporterPhone: string;
     isResolved: boolean;
     createdAt: Date;
+    photoUrl: string;
+    repairPhotoUrl: string;
 }

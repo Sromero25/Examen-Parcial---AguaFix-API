@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportsController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
 const reports_service_1 = require("./reports.service");
 const create_report_dto_1 = require("./dto/create-report.dto");
 const update_report_dto_1 = require("./dto/update-report.dto");
@@ -22,8 +23,10 @@ let ReportsController = class ReportsController {
     constructor(reportsService) {
         this.reportsService = reportsService;
     }
-    create(createReportDto) {
-        return this.reportsService.create(createReportDto);
+    create(createReportDto, photo) {
+        if (!photo)
+            throw new common_1.BadRequestException('La foto es obligatoria');
+        return this.reportsService.create(createReportDto, photo);
     }
     findAll() {
         return this.reportsService.findAll();
@@ -31,8 +34,8 @@ let ReportsController = class ReportsController {
     findOne(id) {
         return this.reportsService.findOne(id);
     }
-    update(id, updateReportDto) {
-        return this.reportsService.update(id, updateReportDto);
+    update(id, updateReportDto, repairPhoto) {
+        return this.reportsService.update(id, updateReportDto, repairPhoto);
     }
     remove(id) {
         return this.reportsService.remove(id);
@@ -41,9 +44,11 @@ let ReportsController = class ReportsController {
 exports.ReportsController = ReportsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('photo')),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_report_dto_1.CreateReportDto]),
+    __metadata("design:paramtypes", [create_report_dto_1.CreateReportDto, Object]),
     __metadata("design:returntype", void 0)
 ], ReportsController.prototype, "create", null);
 __decorate([
@@ -61,10 +66,12 @@ __decorate([
 ], ReportsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('repairPhoto')),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, update_report_dto_1.UpdateReportDto]),
+    __metadata("design:paramtypes", [Number, update_report_dto_1.UpdateReportDto, Object]),
     __metadata("design:returntype", void 0)
 ], ReportsController.prototype, "update", null);
 __decorate([

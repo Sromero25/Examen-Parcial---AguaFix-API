@@ -4,9 +4,16 @@ import { UpdateReportDto } from './dto/update-report.dto';
 export declare class ReportsController {
     private readonly reportsService;
     constructor(reportsService: ReportsService);
-    create(createReportDto: CreateReportDto): Promise<import("./entities/report.entity").Report>;
+    create(createReportDto: CreateReportDto, photo: any): Promise<import("./entities/report.entity").Report>;
     findAll(): Promise<import("./entities/report.entity").Report[]>;
     findOne(id: number): Promise<import("./entities/report.entity").Report>;
-    update(id: number, updateReportDto: UpdateReportDto): Promise<import("./entities/report.entity").Report & UpdateReportDto>;
+    update(id: number, updateReportDto: UpdateReportDto, repairPhoto?: any): Promise<import("./entities/report.entity").Report & {
+        repairPhotoUrl: string;
+        address?: string;
+        description?: string;
+        severity?: string;
+        reporterPhone?: string;
+        isResolved?: boolean;
+    }>;
     remove(id: number): Promise<import("./entities/report.entity").Report>;
 }

@@ -19,6 +19,8 @@ let Report = class Report {
     reporterPhone;
     isResolved;
     createdAt;
+    photoUrl;
+    repairPhotoUrl;
 };
 exports.Report = Report;
 __decorate([
@@ -49,6 +51,14 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], Report.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)('text'),
+    __metadata("design:type", String)
+], Report.prototype, "photoUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)('text', { nullable: true }),
+    __metadata("design:type", String)
+], Report.prototype, "repairPhotoUrl", void 0);
 exports.Report = Report = __decorate([
     (0, typeorm_1.Entity)({ name: 'WATER_REPORT' })
 ], Report);

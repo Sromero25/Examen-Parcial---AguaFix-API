@@ -13,6 +13,7 @@ const reports_service_1 = require("./reports.service");
 const reports_controller_1 = require("./reports.controller");
 const report_entity_1 = require("./entities/report.entity");
 const email_module_1 = require("../email/email.module");
+const storage_module_1 = require("../storage/storage.module");
 let ReportsModule = class ReportsModule {
 };
 exports.ReportsModule = ReportsModule;
@@ -20,7 +21,8 @@ exports.ReportsModule = ReportsModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([report_entity_1.Report]),
-            email_module_1.EmailModule
+            email_module_1.EmailModule,
+            storage_module_1.StorageModule
         ],
         controllers: [reports_controller_1.ReportsController],
         providers: [reports_service_1.ReportsService],
