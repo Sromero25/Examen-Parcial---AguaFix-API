@@ -52,7 +52,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Report.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text'),
+    (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
 ], Report.prototype, "photoUrl", void 0);
 __decorate([

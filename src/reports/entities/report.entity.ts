@@ -23,7 +23,7 @@ export class Report {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   photoUrl: string;
 
   @Column('text', { nullable: true })
