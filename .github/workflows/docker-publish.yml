@@ -1,25 +1,36 @@
-name: Publicar API en Docker Hub
+name: Build, Push and Deploy AguaFix API
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout del código
-        uses: actions/checkout@v3
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
 
-      - name: Iniciar sesión en Docker Hub
-        uses: docker/login-action@v2
+      - name: Login en Docker Hub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Construir y Empujar imagen
-        uses: docker/build-push-action@v4
+      - name: Build and Push imagen
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_USER }}/aguafix-api:latest
+
+      - name: Desplegar en EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/aguafix
+            docker compose pull
+            docker compose up -d

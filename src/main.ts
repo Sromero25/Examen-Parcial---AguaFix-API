@@ -5,6 +5,8 @@ import { envs } from './config/envs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors();
   
   // Activa las validaciones de los DTOs
   app.useGlobalPipes(
