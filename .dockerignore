@@ -1,4 +1,5 @@
 .env
+!.env.example
 compose.yaml
 docker-compose.yml
 node_modules

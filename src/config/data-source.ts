@@ -1,5 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
+import { join } from 'path';
 
 // Cargamos el .env manualmente para el CLI de TypeORM
 config();
@@ -11,8 +12,8 @@ export const dataSourceOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: ['src/**/*.entity.ts'],
-  migrations: ['src/migrations/*.ts'],
+  entities: [join(__dirname, '..', '**', '*.entity.{js,ts}')],
+  migrations: [join(__dirname, '..', 'migrations', '*.{js,ts}')],
   synchronize: false,
 };
 

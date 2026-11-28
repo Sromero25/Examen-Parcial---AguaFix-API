@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Report } from './entities/report.entity';
@@ -11,6 +11,8 @@ import { envs } from '../config/envs';
 
 @Injectable()
 export class ReportsService {
+  private readonly logger = new Logger(ReportsService.name);
+
   constructor(
     @InjectRepository(Report)
     private readonly reportRepository: Repository<Report>,
@@ -33,11 +35,15 @@ export class ReportsService {
     const emailTemplate = generateReportTemplate(createReportDto, photoUrl);
 
     // 4. Enviar el correo
-    await this.emailService.sendEmail(
+    const notificationSent = await this.emailService.sendEmail(
       envs.MAINTENANCE_EMAIL, 
       `Alerta de Fuga - Prioridad ${createReportDto.severity.toUpperCase()}`, 
       emailTemplate
     );
+
+    if (!notificationSent) {
+      this.logger.error(`No se pudo enviar la notificación del reporte ${report.id}; el reporte fue guardado.`);
+    }
 
     return report;
   }

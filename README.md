@@ -25,6 +25,48 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Configuración local
+
+Copie `.env.example` a `.env` y reemplace sus marcadores por valores locales. Todas las variables sin el comentario **Opcional** son obligatorias. No versionar `.env` ni usar valores de producción en el entorno local.
+
+`AWS_REGION` y `AWS_S3_BUCKET` son obligatorias. `AWS_ACCESS_KEY_ID` y `AWS_SECRET_ACCESS_KEY` son opcionales y deben configurarse juntas solo fuera de AWS cuando sean necesarias. En EC2 se deben omitir ambas: el SDK obtiene credenciales mediante el IAM Role de la instancia.
+
+`compose.yaml` es exclusivamente para desarrollo local: crea PostgreSQL 15 con volumen persistente, no publica el puerto de la base de datos y expone la API solo en `127.0.0.1:3000`. La API espera a que PostgreSQL esté saludable y ejecuta las migraciones pendientes al iniciar.
+
+### Producción administrada
+
+El Compose de producción es administrado por Terraform y no se sustituye con el archivo local de este repositorio. Su ubicación es `/opt/aguafix/compose.yaml`, propiedad de `root:root`, utiliza `/etc/aguafix/runtime.env` con permisos `root:root` y `0600`, y publica `80:3000`. PostgreSQL permanece en la red interna.
+
+HTTP y las fotografías S3 con lectura pública solo se permiten para la demostración con datos ficticios. Para un entorno real se debe usar HTTPS y una política de acceso privada apropiada.
+
+Una contraseña estuvo previamente versionada en un Compose histórico. Si fue utilizada, debe rotarse; no se debe reescribir el historial Git ni reproducirla.
+
+### CI/CD y despliegue
+
+Los Pull Requests hacia `main` solo ejecutan instalación, compilación y pruebas. Un `push` a `main` que supere esas validaciones publica `sromero25/aguafix-api:latest` y la etiqueta inmutable `sromero25/aguafix-api:sha-<SHA-del-commit>`. El despliegue usa la referencia inmutable `sromero25/aguafix-api@sha256:<digest>` emitida por el job de publicación, por lo que no depende de la etiqueta mutable `latest`. La concurrencia del workflow serializa publicaciones y despliegues para la misma referencia Git.
+
+Secrets de GitHub requeridos:
+
+| Secret | Responsable | Propósito |
+| --- | --- | --- |
+| `DOCKER_USER` | API | Usuario de Docker Hub autorizado para `sromero25/aguafix-api`. |
+| `DOCKER_PASSWORD` | API | Token o contraseña de Docker Hub para publicar imágenes. |
+| `EC2_HOST` | Infraestructura | Host DNS o IP de la EC2 de producción. |
+| `EC2_SSH_KEY` | Infraestructura | Clave privada exclusiva del usuario de despliegue `aguafix-deploy`. |
+| `EC2_KNOWN_HOSTS` | Infraestructura | Línea `known_hosts` previamente validada para la EC2. |
+
+La infraestructura autoriza el acceso SSH del runner mediante un mecanismo restringido; no se debe abrir indiscriminadamente el puerto 22. El workflow se conecta como `aguafix-deploy`, no como `ubuntu`. Ese usuario no recibe acceso general a Docker ni a `sudo`, y SSH le aplica un comando forzado.
+
+El workflow usa `StrictHostKeyChecking=yes`, valida el `known_hosts` y envía únicamente el comando forzado `sudo -n /usr/local/sbin/aguafix-deploy <digest>`. No abre una sesión remota ni ejecuta comandos adicionales. Después, el runner consulta `GET /` en `http://aguafix-eq1.ddns.net/` hasta 12 veces. Esta comprobación valida únicamente la disponibilidad HTTP básica de la ruta raíz; no sustituye las verificaciones del wrapper sobre PostgreSQL ni pruebas de S3 o SMTP.
+
+#### Contrato obligatorio de `aguafix-deploy` (AguaFix-Infra)
+
+**AguaFix-Infra** instala `/usr/local/sbin/aguafix-deploy` como `root:root` y no escribible por `aguafix-deploy`. El wrapper recibe exactamente un argumento que debe coincidir con `sromero25/aguafix-api@sha256:<64 caracteres hexadecimales en minúscula>`; debe rechazar cualquier otra entrada sin interpretarla mediante shell. El comando forzado SSH acepta exclusivamente `sudo -n /usr/local/sbin/aguafix-deploy <referencia>`.
+
+El wrapper valida que `/etc/aguafix/runtime.env` sea `root:root` con modo `0600`, usa `/opt/aguafix/compose.yaml` root-owned y persiste el digest confirmado en `/etc/aguafix/deployed-image.env`. Establece la imagen API al argumento validado, ejecuta solo `docker compose pull api` y `docker compose up -d --no-deps api`, aplica bloqueo de concurrencia y realiza rollback al digest anterior si falla su healthcheck interno. No ejecuta `down`, elimina volúmenes ni recrea PostgreSQL.
+
+Para comprobar manualmente el servicio, consulte `http://aguafix-eq1.ddns.net/`. Para recuperar una versión anterior, el responsable de infraestructura debe invocar el wrapper con una referencia digest previamente publicada. Solo realizar rollback si las migraciones aplicadas son compatibles hacia atrás: las migraciones no se revierten automáticamente.
+
 ## Project setup
 
 ```bash
