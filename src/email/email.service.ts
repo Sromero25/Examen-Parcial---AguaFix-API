@@ -14,7 +14,7 @@ export class EmailService {
     },
   });
 
-  async sendEmail(to: string, subject: string, template: string): Promise<void> {
+  async sendEmail(to: string, subject: string, template: string): Promise<boolean> {
     try {
       await this.transporter.sendMail({
         from: envs.MAILER_EMAIL,
@@ -22,9 +22,11 @@ export class EmailService {
         subject,
         html: template,
       });
-      this.logger.log(`Correo de alerta enviado exitosamente a ${to}`);
+      this.logger.log('Correo de alerta enviado exitosamente.');
+      return true;
     } catch (error) {
-      this.logger.error('Error al enviar el correo', error);
+      this.logger.error('No se pudo enviar la notificación por correo. La operación principal continúa.');
+      return false;
     }
   }
 }

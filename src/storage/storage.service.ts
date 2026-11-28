@@ -8,10 +8,6 @@ export class StorageService {
   private readonly logger = new Logger(StorageService.name);
   private s3Client = new S3Client({
     region: envs.AWS_REGION,
-    credentials: {
-      accessKeyId: envs.AWS_ACCESS_KEY_ID,
-      secretAccessKey: envs.AWS_SECRET_ACCESS_KEY,
-    },
   });
 
   // Usamos 'any' para evitar errores de TypeScript con Express/Multer
